@@ -1,10 +1,10 @@
 import time
 import jwt
 from decouple import config
+import os
 
-
-JWT_SECRET = config("secret")
-JWT_ALGORITHM = config("algorithm")
+JWT_SECRET = os.getenv("secret")
+JWT_ALGORITHM = os.getenv("algorithm")
 
 
 # Return Genenrate token

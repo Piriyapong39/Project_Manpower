@@ -1,15 +1,16 @@
 from fastapi import FastAPI, Body, Path, Depends, HTTPException
-from auth.db import results, add_data_to_mongodb, add_data_user_to_mongodb ,update_data_to_mongodb, delete_result_in_mongo, MONGODB_DATABASE
+from auth.db import results, add_data_to_mongodb, add_data_user_to_mongodb ,update_data_to_mongodb, delete_result_in_mongo
 from auth.model import PostSchema
 from auth.model import PostSchema, UserSchema, LoginSchema, UpdateSchema
 from auth.jwt import signJWT
 from pymongo import MongoClient
 from auth.jwt_bearer import jwtBearer
-from decouple import config
 import uvicorn
 import os
 
 
+MONGO_URI = os.environ.get('MONGO_URI')
+print(MONGO_URI)
 app = FastAPI()
 
 
@@ -92,7 +93,7 @@ def delete_result(id: int, token: str = Depends(jwtBearer())):
     
 # 7 create new user
 def already_has_user(user_email):
-    client = MongoClient(MONGODB_DATABASE)
+    client = MongoClient(MONGO_URI)
     db = client["user"]
     col = db["datauser"]
     if col.find_one({"Email": user_email}):
@@ -112,7 +113,7 @@ def user_signup(user: UserSchema = Body(...)):
 
 # 8 login
 def check_user(data: LoginSchema):
-    client = MongoClient(MONGODB_DATABASE)
+    client = MongoClient(MONGO_URI)
     db = client["user"]
     col = db["datauser"]
     user = col.find_one({"Email": data.Email, "password": data.password})
