@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Body, Path, Depends, HTTPException
-from auth.db import results, add_data_to_mongodb, add_data_user_to_mongodb ,update_data_to_mongodb, delete_result_in_mongo
+from auth.db import add_data_to_mongodb, update_data_to_mongodb, delete_result_in_mongo, add_data_user_to_mongodb
 from auth.model import PostSchema
 from auth.model import PostSchema, UserSchema, LoginSchema, UpdateSchema
 from auth.jwt import signJWT
@@ -9,9 +9,16 @@ import uvicorn
 import os
 
 
-MONGO_URI = os.environ.get('MONGO_URI')
-print(MONGO_URI)
 app = FastAPI()
+def dataMong():
+    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
+    db = client["DataTest"]
+    col = db["Table"]
+    ALL_DATA = col.find()
+    return list(ALL_DATA)
+results = dataMong()
+
+
 
 
 # 1 Get for testing
@@ -93,7 +100,7 @@ def delete_result(id: int, token: str = Depends(jwtBearer())):
     
 # 7 create new user
 def already_has_user(user_email):
-    client = MongoClient(MONGO_URI)
+    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
     db = client["user"]
     col = db["datauser"]
     if col.find_one({"Email": user_email}):
@@ -113,7 +120,7 @@ def user_signup(user: UserSchema = Body(...)):
 
 # 8 login
 def check_user(data: LoginSchema):
-    client = MongoClient(MONGO_URI)
+    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
     db = client["user"]
     col = db["datauser"]
     user = col.find_one({"Email": data.Email, "password": data.password})
