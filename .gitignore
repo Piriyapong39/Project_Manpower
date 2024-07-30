@@ -1,8 +1,5 @@
-# Ignore .env file
 .env
 
-# Ignore __pycache__ directory
-__pycache__/
+.venv
 
-# Ignore virtual environment
-.venv/
+__pycache__/
