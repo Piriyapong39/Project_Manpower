@@ -7,11 +7,15 @@ from pymongo import MongoClient
 from auth.jwt_bearer import jwtBearer
 import uvicorn
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+MONGO_URL = os.getenv("MONGO_URL")
 
 app = FastAPI()
 def dataMong():
-    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
+    client = MongoClient(MONGO_URL)
     db = client["DataTest"]
     col = db["Table"]
     ALL_DATA = col.find()
@@ -100,7 +104,7 @@ def delete_result(id: int, token: str = Depends(jwtBearer())):
     
 # 7 create new user
 def already_has_user(user_email):
-    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
+    client = MongoClient(MONGO_URL)
     db = client["user"]
     col = db["datauser"]
     if col.find_one({"Email": user_email}):
@@ -120,7 +124,7 @@ def user_signup(user: UserSchema = Body(...)):
 
 # 8 login
 def check_user(data: LoginSchema):
-    client = MongoClient("mongodb+srv://innedhelp123456:25Jg8gtjyCfh61jq@test.w5z7ngz.mongodb.net/?retryWrites=true&w=majority&appName=Test")
+    client = MongoClient(MONGO_URL)
     db = client["user"]
     col = db["datauser"]
     user = col.find_one({"Email": data.Email, "password": data.password})
